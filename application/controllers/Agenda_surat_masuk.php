@@ -145,11 +145,11 @@ class Agenda_surat_masuk extends CI_Controller
             if ( ! $this->upload->do_upload('lampiran')){
                 $this->session->set_flashdata('message', $this->upload->display_errors());
             }
-            if(!empty($this->upload->data('file_name')))
+            if(empty($this->upload->data('file_name')))
             {
-                $lampiran = $this->upload->data('file_name');
-            }else{
                 $lampiran = $this->input->post('lampiranhidden',TRUE);
+            }else{
+                $lampiran = $this->upload->data('file_name');
             }
                 $data = array(
                     'tgl_terima' => $this->input->post('tgl_terima',TRUE),
