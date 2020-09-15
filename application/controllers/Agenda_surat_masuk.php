@@ -24,6 +24,10 @@ class Agenda_surat_masuk extends CI_Controller
         header('Content-Type: application/json');
         echo $this->Agenda_surat_masuk_model->json();
     }
+    public function download($id){	
+        $row = $this->Agenda_surat_masuk_model->get_by_id($id);			
+		force_download("./upload/surat_masuk/".$row->lampiran,NULL);
+	}
 
     public function read($id) 
     {

@@ -22,6 +22,7 @@ class Agenda_surat_masuk_model extends CI_Model
         //add this line for join
         //$this->datatables->join('table2', 'agenda_surat_masuk.field = table2.field');
         $this->datatables->add_column('action', anchor(site_url('agenda_surat_masuk/read/$1'),'<i class="fa fa-eye" aria-hidden="true"></i>', array('class' => 'btn btn-warning btn-sm'))." 
+        ".anchor(site_url('agenda_surat_masuk/download/$1'),'<i class="fa fa-download" aria-hidden="true"></i>', array('class' => 'btn btn-warning btn-sm','target'=>'BLANK'))." 
             ".anchor(site_url('agenda_surat_masuk/update/$1'),'<i class="fa fa-pencil-square-o" aria-hidden="true"></i>', array('class' => 'btn btn-warning btn-sm'))." 
                 ".anchor(site_url('agenda_surat_masuk/delete/$1'),'<i class="fa fa-trash-o" aria-hidden="true"></i>','class="btn btn-warning btn-sm" onclick="javasciprt: return confirm(\'Are You Sure ?\')"'), 'id');
         return $this->datatables->generate();
