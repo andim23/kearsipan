@@ -12,7 +12,8 @@ class Agenda_surat_keluar extends CI_Controller
         $this->load->model('Agenda_surat_keluar_model');
         $this->load->model('Klasifikasi_arsip_model');
         $this->load->library('form_validation');        
-	$this->load->library('datatables');
+        $this->load->library('datatables');
+        
     }
 
     public function index()
@@ -24,6 +25,10 @@ class Agenda_surat_keluar extends CI_Controller
         header('Content-Type: application/json');
         echo $this->Agenda_surat_keluar_model->json();
     }
+    public function download($id){	
+        $row = $this->Agenda_surat_keluar_model->get_by_id($id);			
+		force_download("./upload/surat_keluar/".$row->lampiran,NULL);
+	}	
 
     public function read($id) 
     {
@@ -37,6 +42,7 @@ class Agenda_surat_keluar extends CI_Controller
 		'perihal' => $row->perihal,
 		'hub_surat_lain' => $row->hub_surat_lain,
 		'kode_arsip' => $row->kode_arsip,
+		'lampiran' => $row->lampiran,
 	    );
             $this->template->load('template','agenda_surat_keluar/agenda_surat_keluar_read', $data);
         } else {
@@ -50,15 +56,16 @@ class Agenda_surat_keluar extends CI_Controller
         $data = array(
             'button' => 'TAMBAH',
             'action' => site_url('agenda_surat_keluar/create_action'),
-	    'id' => set_value('id'),
-	    'tgl_surat' => set_value('tgl_surat'),
-	    'no_surat' => set_value('no_surat'),
-	    'tujuan' => set_value('tujuan'),
-	    'perihal' => set_value('perihal'),
-	    'hub_surat_lain' => set_value('hub_surat_lain'),
-	    'kode_arsip' => set_value('kode_arsip'),
-        'klasifikasi_arsip' => $this->Klasifikasi_arsip_model->get_kode_surat(),
-	);
+            'id' => set_value('id'),
+            'tgl_surat' => set_value('tgl_surat'),
+            'no_surat' => set_value('no_surat'),
+            'tujuan' => set_value('tujuan'),
+            'perihal' => set_value('perihal'),
+            'hub_surat_lain' => set_value('hub_surat_lain'),
+            'kode_arsip' => set_value('kode_arsip'),
+            'klasifikasi_arsip' => $this->Klasifikasi_arsip_model->get_kode_surat(),
+            'lampiran' => set_value('lampiran'),
+        );
         $this->template->load('template','agenda_surat_keluar/agenda_surat_keluar_form', $data);
     }
     
@@ -69,18 +76,30 @@ class Agenda_surat_keluar extends CI_Controller
         if ($this->form_validation->run() == FALSE) {
             $this->create();
         } else {
-            $data = array(
-		'tgl_surat' => $this->input->post('tgl_surat',TRUE),
-		'no_surat' => $this->input->post('no_surat',TRUE),
-		'tujuan' => $this->input->post('tujuan',TRUE),
-		'perihal' => $this->input->post('perihal',TRUE),
-		'hub_surat_lain' => $this->input->post('hub_surat_lain',TRUE),
-		'kode_arsip' => $this->input->post('kode_arsip',TRUE),
-	    );
+            $config['upload_path']          = './upload/surat_keluar/';
+            $config['allowed_types']        = 'gif|jpg|png|pdf|doc|docx|txt';
+            $config['max_size']             = 10000;
+            $this->load->library('upload', $config);
 
-            $this->Agenda_surat_keluar_model->insert($data);
-            $this->session->set_flashdata('message', 'Create Record Success 2');
-            redirect(site_url('agenda_surat_keluar'));
+            if ( ! $this->upload->do_upload('lampiran')){
+                $this->session->set_flashdata('message', $this->upload->display_errors());
+                $this->create();
+            }else{
+
+                $data = array(
+                    'tgl_surat' => $this->input->post('tgl_surat',TRUE),
+                    'no_surat' => $this->input->post('no_surat',TRUE),
+                    'tujuan' => $this->input->post('tujuan',TRUE),
+                    'perihal' => $this->input->post('perihal',TRUE),
+                    'hub_surat_lain' => $this->input->post('hub_surat_lain',TRUE),
+                    'kode_arsip' => $this->input->post('kode_arsip',TRUE),
+                    'lampiran' => $this->upload->data('file_name'),
+                );
+            
+                $this->Agenda_surat_keluar_model->insert($data);
+                $this->session->set_flashdata('message', 'Create Record Success 2');
+                redirect(site_url('agenda_surat_keluar'));
+            }
         }
     }
     
@@ -92,15 +111,16 @@ class Agenda_surat_keluar extends CI_Controller
             $data = array(
                 'button' => 'UPDATE',
                 'action' => site_url('agenda_surat_keluar/update_action'),
-		'id' => set_value('id', $row->id),
-		'tgl_surat' => set_value('tgl_surat', $row->tgl_surat),
-		'no_surat' => set_value('no_surat', $row->no_surat),
-		'tujuan' => set_value('tujuan', $row->tujuan),
-		'perihal' => set_value('perihal', $row->perihal),
-		'hub_surat_lain' => set_value('hub_surat_lain', $row->hub_surat_lain),
-		'kode_arsip' => set_value('kode_arsip', $row->kode_arsip),
-        'klasifikasi_arsip' => $this->Klasifikasi_arsip_model->get_kode_surat(),
-	    );
+                'id' => set_value('id', $row->id),
+                'tgl_surat' => set_value('tgl_surat', $row->tgl_surat),
+                'no_surat' => set_value('no_surat', $row->no_surat),
+                'tujuan' => set_value('tujuan', $row->tujuan),
+                'perihal' => set_value('perihal', $row->perihal),
+                'hub_surat_lain' => set_value('hub_surat_lain', $row->hub_surat_lain),
+                'kode_arsip' => set_value('kode_arsip', $row->kode_arsip),
+                'klasifikasi_arsip' => $this->Klasifikasi_arsip_model->get_kode_surat(),
+                'lampiran' => set_value('lampiran', $row->lampiran),
+            );
             $this->template->load('template','agenda_surat_keluar/agenda_surat_keluar_form', $data);
         } else {
             $this->session->set_flashdata('message', 'Record Not Found');
@@ -115,18 +135,33 @@ class Agenda_surat_keluar extends CI_Controller
         if ($this->form_validation->run() == FALSE) {
             $this->update($this->input->post('id', TRUE));
         } else {
-            $data = array(
-		'tgl_surat' => $this->input->post('tgl_surat',TRUE),
-		'no_surat' => $this->input->post('no_surat',TRUE),
-		'tujuan' => $this->input->post('tujuan',TRUE),
-		'perihal' => $this->input->post('perihal',TRUE),
-		'hub_surat_lain' => $this->input->post('hub_surat_lain',TRUE),
-		'kode_arsip' => $this->input->post('kode_arsip',TRUE),
-	    );
+            $config['upload_path']          = './upload/surat_keluar/';
+            $config['allowed_types']        = 'gif|jpg|png|pdf|doc|docx|txt';
+            $config['max_size']             = 10000;
+            $this->load->library('upload', $config);
+            if ( ! $this->upload->do_upload('lampiran')){
+                $this->session->set_flashdata('message', $this->upload->display_errors());
+            }
+            if(!empty($this->upload->data('file_name')))
+            {
+                $lampiran = $this->upload->data('file_name');
+            }else{
+                $lampiran = $this->input->post('lampiranhidden',TRUE);
+            }
 
+                $data = array(
+                    'tgl_surat' => $this->input->post('tgl_surat',TRUE),
+                    'no_surat' => $this->input->post('no_surat',TRUE),
+                    'tujuan' => $this->input->post('tujuan',TRUE),
+                    'perihal' => $this->input->post('perihal',TRUE),
+                    'hub_surat_lain' => $this->input->post('hub_surat_lain',TRUE),
+                    'kode_arsip' => $this->input->post('kode_arsip',TRUE),
+                    'lampiran' => $lampiran,
+                );
+            
             $this->Agenda_surat_keluar_model->update($this->input->post('id', TRUE), $data);
             $this->session->set_flashdata('message', 'Update Record Success');
-            redirect(site_url('agenda_surat_keluar'));
+            redirect(site_url('agenda_surat_keluar'));            
         }
     }
     
@@ -183,12 +218,12 @@ class Agenda_surat_keluar extends CI_Controller
 
         $kolomhead = 0;
         xlsWriteLabel($tablehead, $kolomhead++, "No");
-	xlsWriteLabel($tablehead, $kolomhead++, "Tgl Surat");
-	xlsWriteLabel($tablehead, $kolomhead++, "No Surat");
-	xlsWriteLabel($tablehead, $kolomhead++, "Tujuan");
-	xlsWriteLabel($tablehead, $kolomhead++, "Perihal");
-	xlsWriteLabel($tablehead, $kolomhead++, "Hub Surat Lain");
-	xlsWriteLabel($tablehead, $kolomhead++, "Kode Arsip");
+        xlsWriteLabel($tablehead, $kolomhead++, "Tgl Surat");
+        xlsWriteLabel($tablehead, $kolomhead++, "No Surat");
+        xlsWriteLabel($tablehead, $kolomhead++, "Tujuan");
+        xlsWriteLabel($tablehead, $kolomhead++, "Perihal");
+        xlsWriteLabel($tablehead, $kolomhead++, "Hub Surat Lain");
+        xlsWriteLabel($tablehead, $kolomhead++, "Kode Arsip");
 
 	foreach ($this->Agenda_surat_keluar_model->get_all() as $data) {
             $kolombody = 0;

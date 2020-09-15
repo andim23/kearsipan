@@ -6,7 +6,7 @@
                 <div class="box-header with-border">
                     <h3 class="box-title"><?php echo strtoupper($button); ?> DATA AGENDA SURAT MASUK</h3>
                 </div>
-                <form action="<?php echo $action; ?>" method="post">
+                <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data">
             
                 <table class='table table-bordered>'>        
 
@@ -17,7 +17,8 @@
             	    <tr><td width='200'>Perihal <?php echo form_error('perihal') ?></td><td><input type="text" class="form-control" name="perihal" id="perihal" placeholder="Perihal" value="<?php echo $perihal; ?>" /></td></tr>
             	    <tr><td width='200'>Diteruskan Kepada <?php echo form_error('diteruskan_kpd') ?></td><td><input type="text" class="form-control" name="diteruskan_kpd" id="diteruskan_kpd" placeholder="Diteruskan Kpd" value="<?php echo $diteruskan_kpd; ?>" /></td></tr>
             	    <tr><td width='200'>Kode Arsip (Klasifikasi) <?php echo form_error('kode_arsip') ?></td><td><input type="text" class="form-control ui-autocomplete-input" name="kode_arsip" id="kode_arsip" placeholder="Kode Arsip" value="<?php echo $kode_arsip; ?>" /></td></tr>
-            	    <tr><td></td><td><input type="hidden" name="id" value="<?php echo $id; ?>" /> 
+            	    <tr><td width='200'>Lampiran<?php echo form_error('lampiran') ?></td><td><input type="file" class="form-control" name="lampiran" id="lampiran" placeholder="Lampirkan File Surat Keluar" value="<?php echo $lampiran; ?>" /></td></tr>
+            	    <tr><td></td><td><input type="hidden" name="id" value="<?php echo $id; ?>" /> <input type="hidden" name="lampiranhidden" value="<?php echo $lampiran; ?>" />
             	    <button type="submit" class="btn btn-danger"><i class="fa fa-floppy-o"></i> Simpan</button> 
             	    <a href="<?php echo site_url('agenda_surat_masuk') ?>" class="btn btn-info"><i class="fa fa-sign-out"></i> Kembali</a></td></tr>
 	            </table>

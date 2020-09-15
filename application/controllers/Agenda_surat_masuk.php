@@ -38,6 +38,7 @@ class Agenda_surat_masuk extends CI_Controller
 		'perihal' => $row->perihal,
 		'diteruskan_kpd' => $row->diteruskan_kpd,
 		'kode_arsip' => $row->kode_arsip,
+		'lampiran' => $row->lampiran,
 	    );
             $this->template->load('template','agenda_surat_masuk/agenda_surat_masuk_read', $data);
         } else {
@@ -51,16 +52,17 @@ class Agenda_surat_masuk extends CI_Controller
         $data = array(
             'button' => 'TAMBAH',
             'action' => site_url('agenda_surat_masuk/create_action'),
-	    'id' => set_value('id'),
-	    'tgl_terima' => set_value('tgl_terima'),
-	    'tgl_surat' => set_value('tgl_surat'),
-	    'no_surat' => set_value('no_surat'),
-	    'pengirim' => set_value('pengirim'),
-	    'perihal' => set_value('perihal'),
-	    'diteruskan_kpd' => set_value('diteruskan_kpd'),
-	    'kode_arsip' => set_value('kode_arsip'),
-        'klasifikasi_arsip' => $this->Klasifikasi_arsip_model->get_kode_surat(),
-	);
+            'id' => set_value('id'),
+            'tgl_terima' => set_value('tgl_terima'),
+            'tgl_surat' => set_value('tgl_surat'),
+            'no_surat' => set_value('no_surat'),
+            'pengirim' => set_value('pengirim'),
+            'perihal' => set_value('perihal'),
+            'diteruskan_kpd' => set_value('diteruskan_kpd'),
+            'kode_arsip' => set_value('kode_arsip'),
+            'klasifikasi_arsip' => $this->Klasifikasi_arsip_model->get_kode_surat(),
+            'lampiran' => set_value('lampiran'),
+        );
         $this->template->load('template','agenda_surat_masuk/agenda_surat_masuk_form', $data);
     }
     
@@ -70,20 +72,32 @@ class Agenda_surat_masuk extends CI_Controller
 
         if ($this->form_validation->run() == FALSE) {
             $this->create();
-        } else {
-            $data = array(
-		'tgl_terima' => $this->input->post('tgl_terima',TRUE),
-		'tgl_surat' => $this->input->post('tgl_surat',TRUE),
-		'no_surat' => $this->input->post('no_surat',TRUE),
-		'pengirim' => $this->input->post('pengirim',TRUE),
-		'perihal' => $this->input->post('perihal',TRUE),
-		'diteruskan_kpd' => $this->input->post('diteruskan_kpd',TRUE),
-		'kode_arsip' => $this->input->post('kode_arsip',TRUE),
-	    );
+        } else {            
+            $config['upload_path']          = './upload/surat_masuk/';
+            $config['allowed_types']        = 'gif|jpg|png|pdf|doc|docx|txt';
+            $config['max_size']             = 10000;
+            $this->load->library('upload', $config);
 
-            $this->Agenda_surat_masuk_model->insert($data);
-            $this->session->set_flashdata('message', 'Create Record Success 2');
-            redirect(site_url('agenda_surat_masuk'));
+            if ( ! $this->upload->do_upload('lampiran')){
+                $this->session->set_flashdata('message', $this->upload->display_errors());
+                $this->create();
+            }else{
+
+                $data = array(
+                    'tgl_terima' => $this->input->post('tgl_terima',TRUE),
+                    'tgl_surat' => $this->input->post('tgl_surat',TRUE),
+                    'no_surat' => $this->input->post('no_surat',TRUE),
+                    'pengirim' => $this->input->post('pengirim',TRUE),
+                    'perihal' => $this->input->post('perihal',TRUE),
+                    'diteruskan_kpd' => $this->input->post('diteruskan_kpd',TRUE),
+                    'kode_arsip' => $this->input->post('kode_arsip',TRUE),
+                    'lampiran' => $this->upload->data('file_name'),
+                );
+
+                $this->Agenda_surat_masuk_model->insert($data);
+                $this->session->set_flashdata('message', 'Create Record Success 2');
+                redirect(site_url('agenda_surat_masuk'));
+            }
         }
     }
     
@@ -95,16 +109,17 @@ class Agenda_surat_masuk extends CI_Controller
             $data = array(
                 'button' => 'UPDATE',
                 'action' => site_url('agenda_surat_masuk/update_action'),
-		'id' => set_value('id', $row->id),
-		'tgl_terima' => set_value('tgl_terima', $row->tgl_terima),
-		'tgl_surat' => set_value('tgl_surat', $row->tgl_surat),
-		'no_surat' => set_value('no_surat', $row->no_surat),
-		'pengirim' => set_value('pengirim', $row->pengirim),
-		'perihal' => set_value('perihal', $row->perihal),
-		'diteruskan_kpd' => set_value('diteruskan_kpd', $row->diteruskan_kpd),
-		'kode_arsip' => set_value('kode_arsip', $row->kode_arsip),
-        'klasifikasi_arsip' => $this->Klasifikasi_arsip_model->get_kode_surat(),
-	    );
+                'id' => set_value('id', $row->id),
+                'tgl_terima' => set_value('tgl_terima', $row->tgl_terima),
+                'tgl_surat' => set_value('tgl_surat', $row->tgl_surat),
+                'no_surat' => set_value('no_surat', $row->no_surat),
+                'pengirim' => set_value('pengirim', $row->pengirim),
+                'perihal' => set_value('perihal', $row->perihal),
+                'diteruskan_kpd' => set_value('diteruskan_kpd', $row->diteruskan_kpd),
+                'kode_arsip' => set_value('kode_arsip', $row->kode_arsip),
+                'klasifikasi_arsip' => $this->Klasifikasi_arsip_model->get_kode_surat(),
+                'lampiran' => set_value('lampiran', $row->lampiran),
+            );
             $this->template->load('template','agenda_surat_masuk/agenda_surat_masuk_form', $data);
         } else {
             $this->session->set_flashdata('message', 'Record Not Found');
@@ -119,15 +134,29 @@ class Agenda_surat_masuk extends CI_Controller
         if ($this->form_validation->run() == FALSE) {
             $this->update($this->input->post('id', TRUE));
         } else {
-            $data = array(
-		'tgl_terima' => $this->input->post('tgl_terima',TRUE),
-		'tgl_surat' => $this->input->post('tgl_surat',TRUE),
-		'no_surat' => $this->input->post('no_surat',TRUE),
-		'pengirim' => $this->input->post('pengirim',TRUE),
-		'perihal' => $this->input->post('perihal',TRUE),
-		'diteruskan_kpd' => $this->input->post('diteruskan_kpd',TRUE),
-		'kode_arsip' => $this->input->post('kode_arsip',TRUE),
-	    );
+            $config['upload_path']          = './upload/surat_masuk/';
+            $config['allowed_types']        = 'gif|jpg|png|pdf|doc|docx|txt';
+            $config['max_size']             = 10000;
+            $this->load->library('upload', $config);
+            if ( ! $this->upload->do_upload('lampiran')){
+                $this->session->set_flashdata('message', $this->upload->display_errors());
+            }
+            if(!empty($this->upload->data('file_name')))
+            {
+                $lampiran = $this->upload->data('file_name');
+            }else{
+                $lampiran = $this->input->post('lampiranhidden',TRUE);
+            }
+                $data = array(
+                    'tgl_terima' => $this->input->post('tgl_terima',TRUE),
+                    'tgl_surat' => $this->input->post('tgl_surat',TRUE),
+                    'no_surat' => $this->input->post('no_surat',TRUE),
+                    'pengirim' => $this->input->post('pengirim',TRUE),
+                    'perihal' => $this->input->post('perihal',TRUE),
+                    'diteruskan_kpd' => $this->input->post('diteruskan_kpd',TRUE),
+                    'kode_arsip' => $this->input->post('kode_arsip',TRUE),
+                    'lampiran' => $lampiran,
+                );
 
             $this->Agenda_surat_masuk_model->update($this->input->post('id', TRUE), $data);
             $this->session->set_flashdata('message', 'Update Record Success');
