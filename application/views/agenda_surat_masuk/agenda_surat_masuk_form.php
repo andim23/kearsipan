@@ -23,7 +23,7 @@
             	    <a href="<?php echo site_url('agenda_surat_masuk') ?>" class="btn btn-info"><i class="fa fa-sign-out"></i> Kembali</a></td></tr>
 	            </table>
                 </form>        
-            </div>  
+            </div>   
         </div>
 
         <div class="col-md-6">
