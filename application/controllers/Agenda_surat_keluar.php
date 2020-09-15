@@ -139,15 +139,16 @@ class Agenda_surat_keluar extends CI_Controller
             $config['allowed_types']        = 'gif|jpg|png|pdf|doc|docx|txt';
             $config['max_size']             = 10000;
             $this->load->library('upload', $config);
-            if ( ! $this->upload->do_upload('lampiran')){
-                $this->session->set_flashdata('message', $this->upload->display_errors());
-            }
-            if(!empty($this->upload->data('file_name')))
+            if (empty($_FILES["lampiran"]["name"]))
             {
-                $lampiran = $this->upload->data('file_name');
-            }else{
                 $lampiran = $this->input->post('lampiranhidden',TRUE);
-            }
+            }else{
+                if ( ! $this->upload->do_upload('lampiran')){
+                    $this->session->set_flashdata('message', $this->upload->display_errors());
+                    $this->update($this->input->post('id', TRUE));
+                }
+                $lampiran = $this->upload->data('file_name');
+            } 
 
                 $data = array(
                     'tgl_surat' => $this->input->post('tgl_surat',TRUE),
