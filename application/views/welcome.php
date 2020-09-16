@@ -38,8 +38,8 @@
 	          <!-- small box -->
 	          <div class="small-box bg-purple">
 	            <div class="inner">
-	              <h3>150</h3>
-
+	              <h3><?php echo $total_suratmasuk;?></h3>
+ 
 	              <p>Agenda Surat Masuk</p>
 	            </div>
 	            <div class="icon">
@@ -52,7 +52,7 @@
 	          <!-- small box -->
 	          <div class="small-box bg-aqua">
 	            <div class="inner">
-	              <h3>150</h3>
+	              <h3><?php echo $total_suratkeluar;?></h3>
 
 	              <p>Surat Keluar</p>
 	            </div>
@@ -66,7 +66,7 @@
 	          <!-- small box -->
 	          <div class="small-box bg-green">
 	            <div class="inner">
-	              <h3>150</h3>
+	              <h3><?php echo $total_daftararsip;?></h3>
 
 	              <p>Daftar Isi Arsip</p>
 	            </div>
@@ -80,7 +80,7 @@
 	          <!-- small box -->
 	          <div class="small-box bg-yellow">
 	            <div class="inner">
-	              <h3>150</h3>
+	              <h3><?php echo $total_indexarsip;?></h3>
 
 	              <p>Daftar Index Arsip</p>
 	            </div>

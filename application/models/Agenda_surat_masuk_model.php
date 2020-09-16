@@ -45,15 +45,15 @@ class Agenda_surat_masuk_model extends CI_Model
     // get total rows
     function total_rows($q = NULL) {
         $this->db->like('id', $q);
-	$this->db->or_like('tgl_terima', $q);
-	$this->db->or_like('tgl_surat', $q);
-	$this->db->or_like('no_surat', $q);
-	$this->db->or_like('pengirim', $q);
-	$this->db->or_like('perihal', $q);
-	$this->db->or_like('diteruskan_kpd', $q);
-	$this->db->or_like('kode_arsip', $q);
-	$this->db->from($this->table);
-        return $this->db->count_all_results();
+        $this->db->or_like('tgl_terima', $q);
+        $this->db->or_like('tgl_surat', $q);
+        $this->db->or_like('no_surat', $q);
+        $this->db->or_like('pengirim', $q);
+        $this->db->or_like('perihal', $q);
+        $this->db->or_like('diteruskan_kpd', $q);
+        $this->db->or_like('kode_arsip', $q);
+        $this->db->from($this->table);
+            return $this->db->count_all_results();
     }
 
     // get data with limit and search

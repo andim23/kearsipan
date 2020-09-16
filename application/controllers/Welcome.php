@@ -7,11 +7,21 @@ class Welcome extends CI_Controller {
     {
         parent::__construct();
         is_login();
+        $this->load->model('Agenda_surat_masuk_model');
+        $this->load->model('Agenda_surat_keluar_model');
+        $this->load->model('Daftar_arsip_model');
+        $this->load->model('Index_arsip_model');
     }
 
     public function index() {
         //$this->load->view('table');
-        $this->template->load('template', 'welcome');
+        $data = array(
+            'total_suratmasuk' => $this->Agenda_surat_masuk_model->total_rows(),
+            'total_suratkeluar' => $this->Agenda_surat_keluar_model->total_rows(),
+            'total_daftararsip' => $this->Daftar_arsip_model->total_rows(),
+            'total_indexarsip' => $this->Index_arsip_model->total_rows(),
+        );
+        $this->template->load('template', 'welcome',$data);
     }
 
     public function form() {
